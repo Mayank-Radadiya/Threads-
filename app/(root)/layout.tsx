@@ -11,8 +11,8 @@ import "../globals.css";
 import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import Bottombar from "@/components/shared/Bottombar";
-import RightSidebar from "@/components/shared/RightSidebar";
 import { Inter } from "next/font/google";
+import RightSidebar from "@/components/shared/RightSidebar";
 
 function Header() {
   
@@ -56,7 +56,7 @@ export default function RootLayout({
               <div className="w-full max-w-4xl">{children}</div>
             </section>
             {/* @ts-ignore */}
-            <RightSidebar />
+           <RightSidebar />
           </main>
 
           <Bottombar />
