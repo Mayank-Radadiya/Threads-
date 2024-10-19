@@ -32,6 +32,7 @@ interface Props {
 }
 
 function AccountProfile({ user, btnTitle }: Props) {
+  // Define Zod schema for form validation.
   const form = useForm<z.infer<typeof UserValidation>>({
     resolver: zodResolver(UserValidation),
     defaultValues: {

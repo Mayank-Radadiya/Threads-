@@ -6,18 +6,21 @@ import AccountProfile from "@/components/forms/AccountProfile";
 async function page() {
   //Get Current User Info from Clerk...
   const user = await currentUser();
+  if (!user) return null;
+  
 
   // Get user info from Our Database....
-  const userInfo = {}
+  const userInfo = ""
+  
 
   //Create user  Object  
   const userData = {
-    id: user.id,
+    id: user?.id,
     objectId: userInfo?._id,
     username: userInfo ? userInfo?.username : user.username,
     name: userInfo ? userInfo?.name : user.firstName ?? "",
     bio: userInfo ? userInfo?.bio : "",
-    image: userInfo ? userInfo?.image : user.imageUrl
+    image: userInfo ? userInfo?.image : user.imageUrl,
   };
   return (
     <main className="mx-auto flex max-w-3xl flex-col justify-start px-10 py-20">
