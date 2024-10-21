@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserValidation } from "@/lib/validation/user";
@@ -18,6 +18,10 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadThings";
+import { usePathname, useRouter } from "next/navigation";
+import { updateUser } from "@/lib/actions/user.action";
 
 interface Props {
   user: {
@@ -32,6 +36,16 @@ interface Props {
 }
 
 function AccountProfile({ user, btnTitle }: Props) {
+  // useSate for FileUpload
+  const [file, setFile] = useState<File[]>([]);
+
+  //
+  const { startUpload } = useUploadThing("media");
+
+  //
+  const pathname = usePathname();
+  const router = useRouter();
+
   // Define Zod schema for form validation.
   const form = useForm<z.infer<typeof UserValidation>>({
     resolver: zodResolver(UserValidation),
@@ -43,17 +57,55 @@ function AccountProfile({ user, btnTitle }: Props) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof UserValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
-
   const handleImage = (
-    e: ChangeEvent,
+    e: ChangeEvent<HTMLInputElement>,
     fieldChange: (value: string) => void
   ) => {
     e.preventDefault();
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setFile(Array.from(e.target.files));
+
+      if (!file.type.includes("image")) return null;
+
+      fileReader.onload = async (e) => {
+        fieldChange(e.target?.result?.toString() || "");
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+    const blob = values.profile_photo;
+
+    const hasImageChanged = isBase64Image(blob);
+
+    if (hasImageChanged) {
+      const imageRes = await startUpload(file);
+
+      if (imageRes && imageRes[0].appUrl) {
+        values.profile_photo = imageRes[0].appUrl;
+      }
+    }
+    // update user
+
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      image: values.profile_photo,
+      bio: values.bio,
+      path: pathname,
+    });
+
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
   };
 
   return (
