@@ -18,7 +18,8 @@ interface Props {
 export async function fetchUser(userId: string) {
   try {
     connectToDB();
-
+    
+    //The populate function in Mongoose is used to automatically replace specified paths in a document with documents from other collections. This is particularly useful when working with references between different collections.
     return await User.findOne({ id: userId }).populate({
       path: "communities",
       model: Community,
