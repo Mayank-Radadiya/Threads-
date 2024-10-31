@@ -15,7 +15,6 @@ import { Inter } from "next/font/google";
 import RightSidebar from "@/components/shared/RightSidebar";
 
 function Header() {
-  
   return (
     <>
       <SignedIn>
@@ -53,10 +52,11 @@ export default function RootLayout({
           <main className="flex flex-row">
             <LeftSidebar />
             <section className="main-container">
+              {/* <Header/> */}
               <div className="w-full max-w-4xl">{children}</div>
             </section>
             {/* @ts-ignore */}
-           <RightSidebar />
+            <RightSidebar />
           </main>
 
           <Bottombar />

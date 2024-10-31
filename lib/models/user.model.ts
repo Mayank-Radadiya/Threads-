@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
         ref: "Threads",
       },
     ],
-    onboarding: {
+    onboarded: {
       type: Boolean,
       default: false,
     },
