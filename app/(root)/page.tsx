@@ -1,6 +1,8 @@
+import { fetchPosts } from "@/lib/actions/thread.action";
 import React from "react";
 
-function page() {
+ async function page() {
+  const result = await fetchPosts()
   return (
     <div>
       <h1>Hello World</h1>
