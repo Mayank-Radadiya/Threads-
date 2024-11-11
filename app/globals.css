@@ -59,7 +59,7 @@
   }
 
   .topbar {
-    @apply fixed top-0 z-30 flex w-full items-center justify-between bg-dark-2 px-6 py-3;
+    @apply fixed border border-white top-0 z-30 flex w-full items-center justify-between bg-dark-2 px-6 py-3;
   }
 
   .bottombar {
@@ -158,4 +158,8 @@
 
 .comment-form_btn {
   @apply rounded-3xl bg-primary-500 px-8 py-2 !text-small-regular text-light-1 max-xs:w-full !important;
+}
+.border-0_5-custom {
+  border-width: 0.1px;
+  border-color: #414141;
 }
