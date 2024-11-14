@@ -108,11 +108,11 @@ export async function fetchThreadById(id: string) {
         model: User,
         select: "_id id name image",
       })
-      .populate({
-        path: "community",
-        model: Community,
-        select: "_id id name image",
-      })
+      // .populate({
+      //   path: "community",
+      //   model: Community,
+      //   select: "_id id name image",
+      // })
       .populate({
         path: "children",
         populate: [
@@ -137,5 +137,37 @@ export async function fetchThreadById(id: string) {
     return thread;
   } catch (error) {
     console.log("Error fetching thread in thread.action", error);
+  }
+}
+
+export async function addCommentToThreads(
+  threadId: string,
+  commentText: string,
+  userId: string,
+  path: string
+) {
+  connectToDB();
+
+  try {
+    const OriginalThread = await Thread.findById(threadId);
+
+    if (!OriginalThread) throw new Error("Thread not found");
+
+    //Create a new thread with the comment text, author, and parentId (the original thread's ID)
+    const commentThread = new Thread({
+      text: commentText,
+      author: userId,
+      parentId: threadId,
+    });
+
+    const savedCommentThread = await commentThread.save();
+
+    OriginalThread.children.push(savedCommentThread._id);
+
+    await OriginalThread.save();
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log("Error adding comment to thread in thread.action", error);
   }
 }
