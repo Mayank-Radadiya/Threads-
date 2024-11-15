@@ -1,4 +1,3 @@
-import React from "react";
 import { fetchUser } from "@/lib/actions/user.action";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -15,9 +14,9 @@ async function page({ params }: { params: { id: string } }) {
   if (!user) return null;
 
   const userInfo = await fetchUser(params.id);
-
   if (!userInfo?.onboarded) redirect("/onboarding");
-
+  
+  
   return (
     <section>
       <div className="text-white">

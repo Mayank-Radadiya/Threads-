@@ -4,7 +4,7 @@ import { fetchPosts } from "@/lib/actions/thread.action";
 import { fetchUser } from "@/lib/actions/user.action";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
-import React from "react";
+
 
 async function page() {
 

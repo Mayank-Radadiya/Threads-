@@ -5,7 +5,6 @@ import { fetchThreadById } from "@/lib/actions/thread.action";
 import { fetchUser } from "@/lib/actions/user.action";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import React from "react";
 
 async function page({ params }: { params: { id: string } }) {
   if (!params.id) return null;
