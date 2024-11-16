@@ -23,7 +23,7 @@ const LeftSidebar = () => {
           if (link.route === "/profile") link.route = `${link.route}/${userId}`;
 
           return (
-            <Link
+            <Link 
               href={link.route}
               key={link.label}
               className={`leftsidebar_link ${isActive && "bg-primary-500 "}`}
