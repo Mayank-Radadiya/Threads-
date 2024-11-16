@@ -5,6 +5,7 @@ import User from "../models/user.model";
 import connectToDB from "../mongoose";
 import Community from "../models/community.model";
 import Thread from "../models/thread.model";
+import { FilterQuery, SortOrder } from "mongoose";
 
 interface Props {
   userId: string;
@@ -18,7 +19,7 @@ interface Props {
 export async function fetchUser(userId: string) {
   try {
     connectToDB();
-    
+
     //The populate function in Mongoose is used to automatically replace specified paths in a document with documents from other collections. This is particularly useful when working with references between different collections.
     return await User.findOne({ id: userId }).populate({
       path: "communities",
@@ -74,7 +75,7 @@ export async function fetchUserPosts(userId: string) {
         {
           path: "community",
           model: Community,
-          select: "name id image _id", 
+          select: "name id image _id",
         },
         {
           path: "children",
@@ -82,7 +83,7 @@ export async function fetchUserPosts(userId: string) {
           populate: {
             path: "author",
             model: User,
-            select: "name image id", 
+            select: "name image id",
           },
         },
       ],
@@ -91,5 +92,82 @@ export async function fetchUserPosts(userId: string) {
     return threads;
   } catch (error) {
     console.log("User Action fetching user threads:", error);
+  }
+}
+
+export async function fetchAllUsers({
+  userId,
+  searchString = "",
+  pageNumber = 1,
+  pageSize = 20,
+  sortBy = "desc",
+}: {
+  userId: string;
+  searchString?: string;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: SortOrder;
+}) {
+  try {
+    connectToDB();
+    // Pagination
+    //Get the users based on the skip page number
+    const skipAmountPage = (pageNumber - 1) * pageSize;
+
+    const regex = new RegExp(searchString, "i");
+
+    const query: FilterQuery<typeof User> = {
+      id: { $ne: userId },
+    };
+
+    if (searchString.trim() !== "") {
+      query.$or = [
+        { username: { $regex: regex } },
+        { name: { $regex: regex } },
+      ];
+    }
+
+    const sortOptions = { createdAt: sortBy };
+
+    const usersQuery = User.find(query)
+      .sort(sortOptions)
+      .skip(skipAmountPage)
+      .limit(pageSize);
+
+    const totalUsersCount = await User.countDocuments(query);
+
+    const users = await usersQuery.exec();
+
+    const isNext = totalUsersCount > skipAmountPage + users.length;
+
+    return { users, isNext };
+  } catch (error) {
+    console.log("User Action fetching all users:", error);
+  }
+}
+
+export async function getUserActivity(userId: string) {
+  try {
+    connectToDB();
+
+    const userThreads = await Thread.find({ author: userId });
+
+    const childThreadIds = userThreads.reduce((acc, userThread) => {
+      return acc.concat(userThread.children);
+    }, []);
+
+    const replies = await Thread.find({
+      _id: { $in: childThreadIds },
+      author: { $ne: userId },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "name image _id",
+    });
+
+    return replies;
+  } catch (error) {
+    console.error("Error in user Activity action: ", error);
+    throw error;
   }
 }
