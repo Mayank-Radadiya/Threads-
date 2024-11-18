@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   threadId: string;
-  currentUserId: string;
+  currentUserId: string | null;
   authorId: string;
   parentId: string | null;
   isComment?: boolean;
