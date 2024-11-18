@@ -1,5 +1,6 @@
 import { fetchUserPosts } from "@/lib/actions/user.action";
 import ThreadCard from "../cards/ThreadCard";
+import { fetchCommunityPosts } from "@/lib/actions/community.actions";
 
 interface props {
   currentUserId: string;
@@ -8,8 +9,13 @@ interface props {
 }
 
 async function ThreadTab({ currentUserId, accountId, accountType }: props) {
-  const userThreads = await fetchUserPosts(accountId);
-  if (!userThreads) return null;
+  let userThreads: any;
+  if (accountType === "User") {
+    userThreads = await fetchUserPosts(accountId);
+  } else {
+    // Fetch community threads here
+    userThreads = await fetchCommunityPosts(accountId);
+  }
 
   return (
     <section className="mt-9 flex flex-col gap-10">

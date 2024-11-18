@@ -26,16 +26,26 @@ export async function createThread({ text, author, communityId, path }: Props) {
   try {
     connectToDB();
 
+     const communityIdObject = await Community.findOne(
+       { id: communityId },
+       { _id: 1 }
+     );
     // Create a new thread document with the provided text, author, and communityId (if provided)
     const createNewThreads = await Thread.create({
       text,
       author,
-      community: null,
+      community: communityIdObject,
     });
 
     await User.findByIdAndUpdate(author, {
       $push: { threads: createNewThreads._id },
     });
+
+     if (communityIdObject) {
+       await Community.findByIdAndUpdate(communityIdObject, {
+         $push: { threads: createNewThreads._id },
+       });
+     }
     //  Trigger Next.js to revalidate the page and show new content
     revalidatePath(path);
   } catch (error: any) {
