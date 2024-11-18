@@ -11,7 +11,7 @@ async function page() {
 
   // Get user info from Our Database....
   const userInfo = await fetchUser(user.id);
-  // if (userInfo?.onboarded) redirect("/");
+  if (userInfo?.onboarded) redirect("/");
 
   //Create user  Object
   const userData = {
