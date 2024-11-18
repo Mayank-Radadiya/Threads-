@@ -15,6 +15,7 @@ async function page() {
   }
 
   const activity = await getUserActivity(userInfo._id);
+  
   return (
     <>
       <h1 className="head-text">Activity</h1>
@@ -27,7 +28,7 @@ async function page() {
                 <article className="activity-card">
                   <Image
                     src={activity.author.image}
-                    alt="user_logo"
+                    alt="user-logo"
                     width={20}
                     height={20}
                     className="rounded-full object-cover"
@@ -41,7 +42,7 @@ async function page() {
                 </article>
               </Link>
             ))}
-          </>
+          </> 
         ) : (
           <p className="!text-base-regular text-light-3">No activity yet</p>
         )}
